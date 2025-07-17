@@ -3,8 +3,10 @@ import 'package:flutter_application_1/src/pages/splash_screen.dart';
 import 'package:flutter_application_1/src/pages/home_screen.dart';
 import 'package:flutter_application_1/src/pages/login_screen.dart';
 import 'package:flutter_application_1/src/pages/register_screen.dart';
+import 'package:flutter_application_1/src/pages/common_user/common_user_home_screen.dart';
+import 'package:flutter_application_1/src/pages/admin_user/admin_user_home_screen.dart';
 
-// Importaciones de paquetes de Firebase
+// Importaciones de Firebase
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -27,6 +29,8 @@ class MyApp extends StatelessWidget {
         "home": (context) => const HomeScreen(),
         "login": (context) => const LoginScreen(),
         "register": (context) => const RegisterScreen(),
+        "user_home": (context) => const CommonUserHomeScreen(),
+        "admin_home": (context) => const AdminUserHomeScreen(),
       },
     );
   }

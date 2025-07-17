@@ -13,28 +13,39 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final Logger logger = Logger(); // Nuevo logger
+  final Logger logger = Logger();
 
   Future<void> _login() async {
     try {
+      final email = emailController.text.trim().toLowerCase();
+      final password = passwordController.text.trim();
+
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+        email: email,
+        password: password,
       );
 
-      final uid = credential.user!.uid;
-      final doc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(uid)
+      logger.i("UID obtenido tras login: ${credential.user!.uid}");
+
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('usuarios')
+          .where('correo', isEqualTo: email)
+          .limit(1)
           .get();
 
-      if (!doc.exists) {
-        logger.w("No existe el documento del usuario.");
+      logger.i("Documentos encontrados: ${querySnapshot.docs.length}");
+
+      if (querySnapshot.docs.isEmpty) {
+        logger.w("No existe el usuario con correo $email en Firestore.");
+        _mostrarDialogo("Error", "No se encontró información del usuario.");
         return;
       }
 
-      final data = doc.data()!;
+      final data = querySnapshot.docs.first.data();
+      logger.i("Datos del usuario: $data");
+
       final rol = data['rol'];
+      logger.i("Rol obtenido: $rol");
 
       if (rol == 'usuario') {
         Navigator.pushReplacementNamed(context, 'user_home');
@@ -42,23 +53,28 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacementNamed(context, 'admin_home');
       } else {
         logger.w("Rol no reconocido: $rol");
+        _mostrarDialogo("Error", "Rol no reconocido: $rol");
       }
     } catch (e) {
       logger.e("Error al iniciar sesión: $e");
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: const Text("Error"),
-          content: const Text("Correo o contraseña incorrectos."),
-          actions: [
-            TextButton(
-              child: const Text("Cerrar"),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        ),
-      );
+      _mostrarDialogo("Error", "Correo o contraseña incorrectos.");
     }
+  }
+
+  void _mostrarDialogo(String titulo, String mensaje) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(titulo),
+        content: Text(mensaje),
+        actions: [
+          TextButton(
+            child: const Text("Cerrar"),
+            onPressed: () => Navigator.pop(context),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

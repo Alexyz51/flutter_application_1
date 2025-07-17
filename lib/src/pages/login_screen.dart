@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text(
-                            "Iniciar sesión",
+                            "Registro Anecdotico",
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,

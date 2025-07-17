@@ -26,25 +26,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
         _isLoading = true;
       });
 
-      try {
-        // Crear el usuario en Firebase Auth
-        final UserCredential userCredential = await FirebaseAuth.instance
-            .createUserWithEmailAndPassword(
-              email: _emailController.text.trim(),
-              password: _passwordController.text.trim(),
-            );
+      final email = _emailController.text.trim().toLowerCase();
+      final password = _passwordController.text.trim();
+      final name = _nameController.text.trim();
+      final surname = _surnameController.text.trim();
 
-        final userId = userCredential.user!.uid;
+      try {
+        // Crear el usuario en Firebase Authentication
+        final UserCredential userCredential = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: password);
+
+        final uid = userCredential.user!.uid;
 
         // Guardar información adicional en Firestore
-        await FirebaseFirestore.instance.collection('users').doc(userId).set({
-          'nombre': _nameController.text.trim(),
-          'apellido': _surnameController.text.trim(),
-          'correo': _emailController.text.trim(),
-          'rol': 'usuario', // por defecto
+        await FirebaseFirestore.instance.collection('users').doc(uid).set({
+          'nombre': name,
+          'apellido': surname,
+          'correo': email,
+          'rol': 'usuario',
         });
 
-        // Ir a la pantalla de login u otra
+        // Redirigir al login
         Navigator.pushReplacementNamed(context, 'login');
       } on FirebaseAuthException catch (e) {
         String errorMessage = 'Ocurrió un error';
@@ -52,11 +54,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
           errorMessage = 'El correo ya está en uso.';
         } else if (e.code == 'weak-password') {
           errorMessage = 'La contraseña es muy débil.';
+        } else if (e.code == 'invalid-email') {
+          errorMessage = 'Correo inválido.';
         }
 
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(errorMessage)));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al registrar usuario')),
+        );
       } finally {
         setState(() {
           _isLoading = false;
@@ -98,9 +106,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   final emailRegex = RegExp(
                     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
                   );
-                  return emailRegex.hasMatch(value)
-                      ? null
-                      : 'Ingresa un correo válido';
+                  return emailRegex.hasMatch(value) ? null : 'Correo no válido';
                 },
               ),
               TextFormField(

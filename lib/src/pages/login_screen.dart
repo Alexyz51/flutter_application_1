@@ -25,10 +25,12 @@ class _LoginScreenState extends State<LoginScreen> {
         password: password,
       );
 
-      logger.i("UID obtenido tras login: ${credential.user!.uid}");
+      final uid = credential.user!.uid;
+      logger.i("UID obtenido tras login: $uid");
 
+      // 🔄 CAMBIO AQUÍ: de 'usuarios' a 'users'
       final querySnapshot = await FirebaseFirestore.instance
-          .collection('usuarios')
+          .collection('users')
           .where('correo', isEqualTo: email)
           .limit(1)
           .get();

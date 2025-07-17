@@ -8,146 +8,117 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController surnameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final _nombreController = TextEditingController();
+  final _apellidoController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
-    nameController.dispose();
-    surnameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+    _nombreController.dispose();
+    _apellidoController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  void _registrarUsuario() {
+    if (_formKey.currentState!.validate()) {
+      // Aquí iría la lógica para guardar el usuario
+      // Por ejemplo, llamar a Firebase Auth o guardar en Firestore con hash
+      print("Nombre: ${_nombreController.text}");
+      print("Apellido: ${_apellidoController.text}");
+      print("Correo: ${_emailController.text}");
+      print(
+        "Contraseña (en texto plano, NO hacer esto en producción): ${_passwordController.text}",
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFECEFF1),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black54),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
+      appBar: AppBar(title: const Text("Registro")),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
             children: [
-              const Image(
-                image: AssetImage("assets/book.png"),
-                width: 100,
-                height: 100,
+              TextFormField(
+                controller: _nombreController,
+                decoration: const InputDecoration(labelText: "Nombre"),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Por favor ingrese su nombre";
+                  }
+                  return null;
+                },
               ),
-              const SizedBox(height: 16),
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 350),
-                child: Card(
-                  elevation: 6,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  margin: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "Crear cuenta",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 92, 103, 126),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
-                        TextField(
-                          controller: nameController,
-                          decoration: const InputDecoration(
-                            labelText: "Nombre",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        TextField(
-                          controller: surnameController,
-                          decoration: const InputDecoration(
-                            labelText: "Apellido",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        TextField(
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
-                            labelText: "Correo electrónico",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        TextField(
-                          controller: passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            labelText: "Contraseña",
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Aquí puedes guardar los datos en Firestore
-                              print("Nombre: ${nameController.text}");
-                              print("Apellido: ${surnameController.text}");
-                              print("Email: ${emailController.text}");
-                              print("Password: ${passwordController.text}");
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(
-                                255,
-                                175,
-                                183,
-                                197,
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                            child: const Text(
-                              "Registrarse",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 10),
-
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(
-                              context,
-                            ); // Volver a pantalla anterior
-                          },
-                          child: const Text("¿Ya tienes cuenta? Inicia sesión"),
-                        ),
-                      ],
-                    ),
-                  ),
+              TextFormField(
+                controller: _apellidoController,
+                decoration: const InputDecoration(labelText: "Apellido"),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Por favor ingrese su apellido";
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: "Correo electrónico",
                 ),
+                keyboardType: TextInputType.emailAddress,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Por favor ingrese su correo";
+                  }
+                  final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+                  if (!emailRegex.hasMatch(value)) {
+                    return "Correo no válido";
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(labelText: "Contraseña"),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Por favor ingrese una contraseña";
+                  }
+                  if (value.length < 6) {
+                    return "La contraseña debe tener al menos 6 caracteres";
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _confirmPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: "Confirmar contraseña",
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Por favor confirme su contraseña";
+                  }
+                  if (value != _passwordController.text) {
+                    return "Las contraseñas no coinciden";
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _registrarUsuario,
+                child: const Text("Registrarse"),
               ),
             ],
           ),

@@ -4,7 +4,15 @@ import 'package:flutter_application_1/src/pages/home_screen.dart';
 import 'package:flutter_application_1/src/pages/login_screen.dart';
 import 'package:flutter_application_1/src/pages/register_screen.dart';
 
-void main() => runApp(const MyApp());
+// Importaciones de paquetes de Firebase
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

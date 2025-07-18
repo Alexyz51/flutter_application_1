@@ -75,64 +75,143 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    const azulGrisClaro = Color.fromARGB(255, 175, 183, 197);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Registrarse')),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: ListView(
+      backgroundColor: const Color(0xFFEFEFEF),
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: BackButton(color: Colors.black),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Nombre'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Ingresa tu nombre' : null,
+              Image.asset(
+                'assets/book.png', // Cambiar si el nombre es otro
+                height: 100,
               ),
-              TextFormField(
-                controller: _surnameController,
-                decoration: const InputDecoration(labelText: 'Apellido'),
-                validator: (value) =>
-                    value!.isEmpty ? 'Ingresa tu apellido' : null,
-              ),
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Correo electrónico',
-                ),
-                keyboardType: TextInputType.emailAddress,
-                validator: (value) {
-                  if (value!.isEmpty) return 'Ingresa tu correo';
-                  final emailRegex = RegExp(
-                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                  );
-                  return emailRegex.hasMatch(value) ? null : 'Correo no válido';
-                },
-              ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Contraseña'),
-                obscureText: true,
-                validator: (value) =>
-                    value!.length < 6 ? 'Mínimo 6 caracteres' : null,
-              ),
-              TextFormField(
-                controller: _confirmPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Confirmar contraseña',
-                ),
-                obscureText: true,
-                validator: (value) => value != _passwordController.text
-                    ? 'Las contraseñas no coinciden'
-                    : null,
-              ),
-              const SizedBox(height: 20),
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                      onPressed: _registerUser,
-                      child: const Text('Registrarse'),
+              const SizedBox(height: 16),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 350),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  elevation: 8,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 16,
                     ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'Registro Anecdótico',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: azulGrisClaro,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Nombre',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) =>
+                                value!.isEmpty ? 'Ingresa tu nombre' : null,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _surnameController,
+                            decoration: const InputDecoration(
+                              labelText: 'Apellido',
+                              border: OutlineInputBorder(),
+                            ),
+                            validator: (value) =>
+                                value!.isEmpty ? 'Ingresa tu apellido' : null,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: const InputDecoration(
+                              labelText: 'Correo electrónico',
+                              border: OutlineInputBorder(),
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value!.isEmpty) return 'Ingresa tu correo';
+                              final emailRegex = RegExp(
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                              );
+                              return emailRegex.hasMatch(value)
+                                  ? null
+                                  : 'Correo no válido';
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _passwordController,
+                            decoration: const InputDecoration(
+                              labelText: 'Contraseña',
+                              border: OutlineInputBorder(),
+                            ),
+                            obscureText: true,
+                            validator: (value) => value!.length < 6
+                                ? 'Mínimo 6 caracteres'
+                                : null,
+                          ),
+                          const SizedBox(height: 16),
+                          TextFormField(
+                            controller: _confirmPasswordController,
+                            decoration: const InputDecoration(
+                              labelText: 'Confirmar contraseña',
+                              border: OutlineInputBorder(),
+                            ),
+                            obscureText: true,
+                            validator: (value) =>
+                                value != _passwordController.text
+                                ? 'Las contraseñas no coinciden'
+                                : null,
+                          ),
+                          const SizedBox(height: 24),
+                          _isLoading
+                              ? const CircularProgressIndicator()
+                              : ElevatedButton(
+                                  onPressed: _registerUser,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: azulGrisClaro,
+                                    minimumSize: const Size.fromHeight(48),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                  child: const Text('Registrarse'),
+                                ),
+                          const SizedBox(height: 12),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(context, 'login');
+                            },
+                            child: const Text(
+                              '¿Ya tienes cuenta? Inicia sesión aquí',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/src/pages/widgets/breadcrumb_navigation.dart'; // Importa el breadcrumb
 
 class EditListScreen extends StatelessWidget {
   const EditListScreen({super.key});
@@ -8,27 +9,32 @@ class EditListScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro Anecdótico'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+        leading: BackButton(onPressed: () => Navigator.pop(context)),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Inicio > Editar Lista',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-              ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            BreadcrumbBar(
+              items: [
+                BreadcrumbItem(
+                  label: 'Inicio',
+                  onTap: () =>
+                      Navigator.pushReplacementNamed(context, 'admin_home'),
+                ),
+                BreadcrumbItem(
+                  label: 'Editar Lista',
+                  onTap: null, // Pantalla actual, no clickable
+                ),
+              ],
             ),
-          ),
-          Expanded(child: Center(child: Text('Aquí podrás editar la lista.'))),
-        ],
+            const SizedBox(height: 20),
+            // Aquí continúa tu UI para editar lista
+            const Center(
+              child: Text('Aquí va la edición de la lista de alumnos'),
+            ),
+          ],
+        ),
       ),
     );
   }

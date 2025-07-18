@@ -1,47 +1,60 @@
 import 'package:flutter/material.dart';
+import '../widgets/breadcrumb_navigation.dart';
 
 class AdminUserHomeScreen extends StatelessWidget {
   const AdminUserHomeScreen({super.key});
+
+  void _openMenu(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.edit),
+                title: const Text('Editar lista'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Aquí ponés la lógica para ir a editar lista
+                  Navigator.pushNamed(context, 'edit_list');
+                },
+              ),
+              // Podés agregar más opciones acá si querés
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Registro Anecdótico'),
+        title: const Text('Panel de Administrador'),
         actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'editar_lista') {
-                Navigator.of(context).pushNamed('edit_list');
-              }
-            },
-            itemBuilder: (BuildContext context) => [
-              const PopupMenuItem<String>(
-                value: 'editar_lista',
-                child: Text('Editar Lista'),
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () => _openMenu(context),
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          // Segunda barra: ubicación actual
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Inicio',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey,
-              ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: BreadcrumbBar(
+          items: [
+            BreadcrumbItem(
+              label: 'Inicio',
+              onTap: () {
+                Navigator.pushReplacementNamed(context, 'admin_home');
+              },
             ),
-          ),
-          // Contenido principal
-          Expanded(child: Center(child: Text('¡Bienvenido, administrador!'))),
-        ],
+          ],
+        ),
       ),
     );
   }

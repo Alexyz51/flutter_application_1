@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/src/pages/admin_user/edit_list_screen.dart';
 import 'package:flutter_application_1/src/pages/splash_screen.dart';
 import 'package:flutter_application_1/src/pages/home_screen.dart';
 import 'package:flutter_application_1/src/pages/login_screen.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         "register": (context) => const RegisterScreen(),
         "user_home": (context) => const CommonUserHomeScreen(),
         "admin_home": (context) => const AdminUserHomeScreen(),
+        "edit_list": (context) => const EditListScreen(),
       },
     );
   }

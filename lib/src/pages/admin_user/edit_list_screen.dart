@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/src/pages/widgets/breadcrumb_navigation.dart'; // Importa el breadcrumb
+import 'package:flutter_application_1/src/pages/widgets/breadcrumb_navigation.dart';
+import 'package:flutter_application_1/src/pages/admin_user/csv_import_screen.dart'; // Importación agregada
 
 class EditListScreen extends StatelessWidget {
   const EditListScreen({super.key});
@@ -29,10 +30,19 @@ class EditListScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            // Aquí continúa tu UI para editar lista
-            const Center(
-              child: Text('Aquí va la edición de la lista de alumnos'),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CsvImportScreen(),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.upload_file),
+              label: const Text('Importar desde CSV'),
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/src/pages/admin_user/csv_import_screen.dart';
 import 'package:flutter_application_1/src/pages/admin_user/edit_list_screen.dart';
 import 'package:flutter_application_1/src/pages/splash_screen.dart';
 import 'package:flutter_application_1/src/pages/home_screen.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         "user_home": (context) => const CommonUserHomeScreen(),
         "admin_home": (context) => const AdminUserHomeScreen(),
         "edit_list": (context) => const EditListScreen(),
+        'csv_import': (context) => const CsvImportScreen(),
       },
     );
   }

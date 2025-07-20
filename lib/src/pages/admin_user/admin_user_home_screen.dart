@@ -4,44 +4,42 @@ import '../widgets/breadcrumb_navigation.dart';
 class AdminUserHomeScreen extends StatelessWidget {
   const AdminUserHomeScreen({super.key});
 
-  void _openMenu(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Wrap(
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: Drawer(
+        child: SafeArea(
+          child: ListView(
+            padding: EdgeInsets.zero,
             children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'Menú de Administrador',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
               ListTile(
                 leading: const Icon(Icons.edit),
                 title: const Text('Editar lista'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Aquí ponés la lógica para ir a editar lista
                   Navigator.pushNamed(context, 'edit_list');
                 },
               ),
-              // Podés agregar más opciones acá si querés
+              // Otras opciones se pueden agregar más adelante
             ],
           ),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+        ),
+      ),
       appBar: AppBar(
         title: const Text('Panel de Administrador'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            onPressed: () => _openMenu(context),
-          ),
-        ],
+        automaticallyImplyLeading: true, // Esto muestra la hamburguesa
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),

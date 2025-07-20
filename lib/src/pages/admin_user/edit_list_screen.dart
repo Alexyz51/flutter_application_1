@@ -15,6 +15,12 @@ class _EditListScreenState extends State<EditListScreen> {
   Map<String, Map<String, Map<String, List<Map<String, dynamic>>>>> data = {};
   bool loading = true;
 
+  final TextStyle _textStyle = const TextStyle(
+    fontWeight: FontWeight.normal,
+    color: Colors.black,
+    fontSize: 16, // Tamaño uniforme para todos los textos
+  );
+
   @override
   void initState() {
     super.initState();
@@ -45,9 +51,29 @@ class _EditListScreenState extends State<EditListScreen> {
       tempData[nivel]![grado]![seccion]!.add(alumnoConId);
     }
 
-    // Ordenar alumnos por número de lista y ordenar secciones (A antes que B para Nivel Medio)
+    // Ordenar niveles, grados y secciones
     tempData.forEach((nivel, grados) {
-      grados.forEach((grado, secciones) {
+      // Ordenar grados: para "Nivel Medio", ordenar numéricamente si posible, sino alfabéticamente
+      var gradosList = grados.keys.toList();
+      if (nivel == 'Nivel Medio') {
+        gradosList.sort((a, b) {
+          int? aNum = int.tryParse(a);
+          int? bNum = int.tryParse(b);
+          if (aNum != null && bNum != null) {
+            return aNum.compareTo(bNum);
+          }
+          return a.compareTo(b);
+        });
+      } else {
+        gradosList.sort();
+      }
+
+      final gradosOrdenadosMap =
+          <String, Map<String, List<Map<String, dynamic>>>>{};
+      for (var grado in gradosList) {
+        final secciones = grados[grado]!;
+
+        // Ordenar secciones, con "A" antes que "B" para Nivel Medio
         List<String> seccionesOrdenadas = secciones.keys.toList();
         if (nivel == 'Nivel Medio') {
           seccionesOrdenadas.sort((a, b) {
@@ -68,8 +94,11 @@ class _EditListScreenState extends State<EditListScreen> {
           );
           seccionesOrdenadasMap[sec] = alumnos;
         }
-        grados[grado] = seccionesOrdenadasMap;
-      });
+
+        gradosOrdenadosMap[grado] = seccionesOrdenadasMap;
+      }
+
+      tempData[nivel] = gradosOrdenadosMap;
     });
 
     setState(() {
@@ -236,7 +265,13 @@ class _EditListScreenState extends State<EditListScreen> {
     if (loading) return const Center(child: CircularProgressIndicator());
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Editar lista')),
+      appBar: AppBar(
+        title: const Text('Editar lista'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Column(
         children: [
           Padding(
@@ -264,13 +299,7 @@ class _EditListScreenState extends State<EditListScreen> {
                 final grados = nivelEntry.value;
 
                 return ExpansionTile(
-                  title: Text(
-                    nivel,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black,
-                    ),
-                  ),
+                  title: Text(nivel, style: _textStyle),
                   children: grados.entries.map((gradoEntry) {
                     final grado = gradoEntry.key;
                     final secciones = gradoEntry.value;
@@ -280,42 +309,26 @@ class _EditListScreenState extends State<EditListScreen> {
                         nivel == 'Nivel Medio'
                             ? '$grado curso'
                             : 'Grado: $grado',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.normal,
-                          color: Colors.black,
-                        ),
+                        style: _textStyle,
                       ),
                       children: secciones.entries.map((seccionEntry) {
                         final seccion = seccionEntry.key;
                         final alumnos = seccionEntry.value;
 
                         return ExpansionTile(
-                          title: Text(
-                            'Sección: $seccion',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.normal,
-                              color: Colors.black,
-                            ),
-                          ),
+                          title: Text('Sección: $seccion', style: _textStyle),
                           children: alumnos.map((alumno) {
                             return ListTile(
                               title: RichText(
                                 text: TextSpan(
-                                  style: DefaultTextStyle.of(context).style,
+                                  style: _textStyle,
                                   children: [
                                     TextSpan(
                                       text: '${alumno['numero_lista']}  ',
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.black,
-                                      ),
                                     ),
                                     TextSpan(
                                       text:
                                           '${alumno['nombre']} ${alumno['apellido']}',
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                      ),
                                     ),
                                   ],
                                 ),
@@ -343,7 +356,7 @@ class _EditListScreenState extends State<EditListScreen> {
   }
 }
 
-/// Widget para importar CSV (simplificado, puedes adaptarlo)
+/// Widget para importar CSV (simplificado, se adaptar)
 class CsvImportWidget extends StatefulWidget {
   final VoidCallback onImportCompleted;
 
